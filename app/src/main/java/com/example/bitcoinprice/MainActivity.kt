@@ -1,5 +1,5 @@
 package com.example.bitcoinprice
-
+//pelaprimeiravez
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
