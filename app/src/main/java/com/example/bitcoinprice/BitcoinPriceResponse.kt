@@ -15,3 +15,22 @@ data class BitcoinPriceDto(
     @SerializedName("y")
     val value: Double
 )
+
+/*
+// Classe principal para o retorno da API
+@kotlinx.serialization.Serializable
+data class BitcoinPriceResponse(
+    val status: String,
+    val name: String,
+    val unit: String,
+    val period: String,
+    val description: String,
+    val values: List<PriceValue>
+)
+
+// Classe para representar os valores de preço no JSON
+@kotlinx.serialization.Serializable
+data class PriceValue(
+    val x: Long,  // Usando Long para representar o timestamp
+    val y: Double // Usando Double para representar o preço
+)*/
