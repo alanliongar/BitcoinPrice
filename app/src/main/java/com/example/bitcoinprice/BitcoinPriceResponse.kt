@@ -10,6 +10,8 @@ data class BitcoinPriceResponse(
 
 @kotlinx.serialization.Serializable
 data class BitcoinPriceDto(
+    @SerializedName("x")
+    val timestamp: Long,
     @SerializedName("y")
-    val value: Int
+    val value: Double
 )

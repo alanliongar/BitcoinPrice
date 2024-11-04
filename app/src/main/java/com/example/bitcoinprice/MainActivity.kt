@@ -1,6 +1,7 @@
 package com.example.bitcoinprice
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +46,7 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(Unit) {
                     val response = bitcoinApiService.getBitcoinPrices(time = "3days")
                     valoresTeste.value = if (response.isSuccess) {
+                        Log.d("Alannn", response.toString())
                         response
                     } else {
                         Result.failure(Exception("Failed to fetch data"))
