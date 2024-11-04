@@ -1,7 +1,6 @@
 package com.example.bitcoinprice
 
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface BitcoinPriceService {
@@ -9,5 +8,5 @@ interface BitcoinPriceService {
     suspend fun getBitcoinPrices(
         @Query("format") format: String = "json",
         @Query("timespan") time: String
-    ): Result<BitcoinPriceResponse>
+    ): BitcoinPriceResponse
 }
