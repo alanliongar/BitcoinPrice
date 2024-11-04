@@ -51,8 +51,13 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                Column() {
-                    Text(text = valoresTeste.value?.getOrNull()?.listOfValues?.size.toString())
+                Column {
+                    if (valoresTeste.value == null) {
+                        Text(text = "Carregando...") // Exibe um texto de carregamento enquanto a API responde
+                    } else {
+                        val listSize = valoresTeste.value?.getOrNull()?.listOfValues?.size ?: 0
+                        Text(text = "Tamanho da lista: $listSize") // Exibe o tamanho da lista após o carregamento
+                    }
                 }
 
                 /*Column(
