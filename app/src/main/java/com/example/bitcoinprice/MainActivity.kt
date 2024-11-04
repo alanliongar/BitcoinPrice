@@ -1,5 +1,5 @@
 package com.example.bitcoinprice
-//pelaprimeiravez
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,7 +18,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,14 +36,25 @@ class MainActivity : ComponentActivity() {
         val filtros = FilterOptions()
         setContent {
             BitcoinPriceTheme {
-                Column(
+                val bitcoinApiService =
+                    BitRetrofitClient.retrofitInstance.create(BitcoinPriceService::class.java)
+
+                LaunchedEffect(Unit) {
+                    val a = bitcoinApiService.getBitcoinPrices(3)
+                }
+
+                Column(){
+                    Text(text="Olar")
+                }
+
+                /*Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     FilterGrid(filtros)
                     Spacer(modifier = Modifier.padding(0.dp))
-                }
+                }*/
 
             }
         }
