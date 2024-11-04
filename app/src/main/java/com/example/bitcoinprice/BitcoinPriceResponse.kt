@@ -9,5 +9,7 @@ data class BitcoinPriceResponse(
 
 data class BitcoinPriceDto(
     @SerializedName("y")
-    val value: Double
+    val value: Double,
+    @SerializedName("x")
+    val timestamp: Long
 )

@@ -39,9 +39,12 @@ import com.aay.compose.baseComponents.model.GridOrientation
 import com.aay.compose.lineChart.LineChart
 import com.aay.compose.lineChart.model.LineParameters
 import com.aay.compose.lineChart.model.LineType
-
 import kotlinx.coroutines.launch
 import kotlin.random.Random
+
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 val filtros = FilterOptions()
 
@@ -49,6 +52,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //enableEdgeToEdge()
+
         setContent {
             LineChartSample()
             /*var filter = remember { mutableStateOf<String>("1days") }*/
@@ -57,10 +61,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun LineChartSample() {
+fun LineChartSample(list: List<Double>) {
     val testLineParameters: List<LineParameters> = listOf(
         LineParameters(
-            label = "revenue",
+            label = "",
             data = listOf(70.0, 00.0, 50.33, 40.0, 100.500, 50.0),
             lineColor = Color.Gray,
             lineType = LineType.CURVED_LINE,
@@ -102,6 +106,19 @@ fun randomColor(): Color {
         blue = Random.nextFloat(),
         alpha = 1f // Pode ajustar a opacidade se necessário
     )
+}
+
+
+
+fun convertTimestampToDate(timestamp: Long): String {
+    // Cria uma instância de Date a partir do timestamp
+    val date = Date(timestamp * 1000) // O timestamp geralmente está em segundos, então multiplicamos por 1000
+
+    // Define o formato desejado para a data
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
+
+    // Retorna a data formatada como uma String
+    return dateFormat.format(date)
 }
 
 
