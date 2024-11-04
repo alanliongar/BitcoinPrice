@@ -20,6 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,13 +40,19 @@ class MainActivity : ComponentActivity() {
             BitcoinPriceTheme {
                 val bitcoinApiService =
                     BitRetrofitClient.retrofitInstance.create(BitcoinPriceService::class.java)
-
+                //var valoresTeste by remember { mutableStateOf<Result<BitcoinPriceResponse>?>(null) }
+                var valoresTeste = remember { mutableStateOf<Result<BitcoinPriceResponse>?>(null) }
                 LaunchedEffect(Unit) {
-                    val a = bitcoinApiService.getBitcoinPrices(3)
+                    val response = bitcoinApiService.getBitcoinPrices(time = "3days")
+                    valoresTeste.value = if (response.isSuccess) {
+                        response
+                    } else {
+                        Result.failure(Exception("Failed to fetch data"))
+                    }
                 }
 
-                Column(){
-                    Text(text="Olar")
+                Column() {
+                    Text(text = valoresTeste.value?.getOrNull()?.listOfValues?.size.toString())
                 }
 
                 /*Column(
