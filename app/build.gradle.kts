@@ -51,23 +51,18 @@ dependencies {
 
     val coil_version = "2.7.0"
     implementation("io.coil-kt:coil-compose:$coil_version")
+
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-    /*implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")*/
 
-    /*val compose_version = "1.9.2" //1.6.7
-    implementation("androidx.compose.ui:ui:$compose_version")*/
 
-    /*val LATEST_VERSION = "0.2.1"
-    implementation("io.github.bytebeats:compose-charts:${LATEST_VERSION}")*/
+
     val latest_release = "Beta-0.0.5"
     implementation("io.github.thechance101:chart:$latest_release")
-
-    /*val KOTLIN_VERSION = "2.0.21"*/
-
+    implementation ("io.github.ehsannarmani:compose-charts:0.0.16")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.EaseInOutCubic
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
@@ -29,16 +33,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.aay.compose.baseComponents.model.GridOrientation
-import com.aay.compose.lineChart.LineChart
-import com.aay.compose.lineChart.model.LineParameters
-import com.aay.compose.lineChart.model.LineType
+import ir.ehsannarmani.compose_charts.LineChart
+import ir.ehsannarmani.compose_charts.models.AnimationMode
+import ir.ehsannarmani.compose_charts.models.DrawStyle
+import ir.ehsannarmani.compose_charts.models.Line
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -54,23 +60,132 @@ class MainActivity : ComponentActivity() {
         //enableEdgeToEdge()
 
         setContent {
-            LineChartSample()
-            /*var filter = remember { mutableStateOf<String>("1days") }*/
+
+            var filter = remember { mutableStateOf<String>("") }
+            var valoresTeste = remember { mutableStateOf<BitcoinPriceResponse?>(null) }
+            Column(modifier = Modifier.fillMaxSize()) {
+                BitcoinPriceFiltersAndRequest(filter = filter, valoresTeste = valoresTeste)
+                Spacer(modifier = Modifier.size(20.dp))
+                valoresTeste.value?.listOfValues?.let { TelaPrincipal(it) }
+
+            }
+        }
+    }
+}
+
+
+@Composable
+fun BitcoinPriceFiltersAndRequest(
+    filter: MutableState<String>,
+    valoresTeste: MutableState<BitcoinPriceResponse?>
+) {
+    Column {
+        Spacer(modifier = Modifier.size(20.dp))
+        FilterGrid(filtros = filtros, filter = filter)
+        Spacer(modifier = Modifier.size(20.dp))
+        BitcoinApiRequest(filter = filter, valoresTeste = valoresTeste)
+    }
+}
+
+@Composable
+fun BitcoinApiRequest(
+    valoresTeste: MutableState<BitcoinPriceResponse?>,
+    filter: MutableState<String>,
+    modifier: Modifier = Modifier
+        .wrapContentHeight()
+        .fillMaxWidth()
+) {
+    val bitcoinApiService =
+        BitRetrofitClient.retrofitInstance.create(BitcoinPriceService::class.java)
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(filter.value) {
+        coroutineScope.launch {
+            try {
+                val response = bitcoinApiService.getBitcoinPrices(time = filter.value)
+                valoresTeste.value = response
+                Log.d("API Response", response.toString())
+            } catch (e: Exception) {
+                Log.e("API Error", e.message ?: "Unknown error")
+            }
+        }
+    }
+
+    Column {
+        if (valoresTeste == null) {
+            Text(text = "Carregando...") // Exibe um texto de carregamento enquanto a API responde
+        } else {
+            val listSize = valoresTeste.value?.listOfValues?.size
+            Text(
+                text = "Tamanho da lista: $listSize",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            ) // Exibe o tamanho da lista após o carregamento
         }
     }
 }
 
 @Composable
-fun LineChartSample(list: List<Double>) {
+fun TelaPrincipal(list: List<BitcoinPriceDto>) {
+    Box(
+        modifier = Modifier
+            .height(400.dp).fillMaxWidth()
+            .background(Color.White),
+        contentAlignment = Alignment.Center
+    ) {
+        MeuGrafico(list = list)
+    }
+}
+
+
+@Composable
+fun MeuGrafico(list: List<BitcoinPriceDto>) {
+    // Configura o gráfico dentro do composable
+    val lista = list.map {
+        it.value
+    }
+    LineChart(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 22.dp),
+        data =
+        listOf(
+            Line(
+                label = "Windows",
+                values = lista,
+                color = SolidColor(randomColor()),
+                firstGradientFillColor = randomColor(),
+                secondGradientFillColor = randomColor(),
+                strokeAnimationSpec = tween(2000, easing = EaseInOutCubic),
+                gradientAnimationDelay = 100,
+            )
+        ),
+        animationMode = AnimationMode.Together(delayBuilder = { it * 500L })
+    )
+}
+
+/*@Composable
+fun LineChartSample(listOfObjects: List<BitcoinPriceDto?>) {
+    var list: List<Double>
+    if (listOfObjects.isNotEmpty()) {
+        list = listOfObjects.map {
+            it?.value ?: 0.0
+        }
+    } else {
+        list = emptyList()
+    }
+    val xAxisData = list.mapIndexed { index, _ -> "$index" }
+    Log.d("Alannn", xAxisData.size.toString())
+
     val testLineParameters: List<LineParameters> = listOf(
         LineParameters(
-            label = "",
-            data = listOf(70.0, 00.0, 50.33, 40.0, 100.500, 50.0),
-            lineColor = Color.Gray,
+            label = "BitcoinPrice",
+            data = list,
+            lineColor = randomColor(),
             lineType = LineType.CURVED_LINE,
             lineShadow = true,
         ),
-        /*LineParameters(
+        *//*LineParameters(
             label = "Earnings",
             data = listOf(60.0, 80.6, 40.33, 86.232, 88.0, 90.0),
             lineColor = Color(0xFFFF7F50),
@@ -83,20 +198,33 @@ fun LineChartSample(list: List<Double>) {
             lineColor = Color(0xFF81BE88),
             lineType = LineType.CURVED_LINE,
             lineShadow = false,
-        )*/
+        )*//*
     )
 
-    Box(Modifier) {
-        LineChart(modifier = Modifier.fillMaxSize(), linesParameters = testLineParameters, isGrid = true, gridColor = Color.Blue, xAxisData = listOf("2015", "2016", "2017", "2018", "2019", "2020"), animateChart = true, showGridWithSpacer = true, yAxisStyle = TextStyle(
+    Box(modifier = Modifier.fillMaxWidth()) {
+        LineChart(
+            modifier = Modifier.fillMaxWidth(),
+            linesParameters = testLineParameters,
+            isGrid = true,
+            gridColor = Color.Blue,
+            xAxisData = xAxisData,
+            animateChart = true,
+            showGridWithSpacer = true,
+            yAxisStyle = TextStyle(
                 fontSize = 14.sp,
-                color = Color.Gray,
-            ), xAxisStyle = TextStyle(
-                fontSize = 14.sp,
+                color = randomColor(),
+            ),
+            xAxisStyle = TextStyle(
+                fontSize = 12.sp,
                 color = Color.Gray,
                 fontWeight = FontWeight.W400
-            ), yAxisRange = 14, oneLineChart = false, gridOrientation = GridOrientation.VERTICAL)
+            ),
+            yAxisRange = 15,
+            oneLineChart = false,
+            gridOrientation = GridOrientation.VERTICAL
+        )
     }
-}
+}*/
 
 
 fun randomColor(): Color {
@@ -109,10 +237,10 @@ fun randomColor(): Color {
 }
 
 
-
 fun convertTimestampToDate(timestamp: Long): String {
     // Cria uma instância de Date a partir do timestamp
-    val date = Date(timestamp * 1000) // O timestamp geralmente está em segundos, então multiplicamos por 1000
+    val date =
+        Date(timestamp * 1000) // O timestamp geralmente está em segundos, então multiplicamos por 1000
 
     // Define o formato desejado para a data
     val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
@@ -122,59 +250,31 @@ fun convertTimestampToDate(timestamp: Long): String {
 }
 
 
-
 fun randomLength(): Float {
     return Random.nextFloat() * 100f // Gera um valor entre 0 e 100
 }
 
+/*fun BitcoinApiValuesRequest(
+    time: String,
+    bitcoinApiService: BitcoinPriceService
+): Result<BitcoinPriceResponse?> {
+    GlobalScope.launch(Dispatchers.IO) {
+        val finalResult: Result<BitcoinPriceResponse?>
+        try {
+            val response = bitcoinApiService.getBitcoinPrices(time = time)
+            if (response.isSuccess) {
+                finalResult = response
+            } else {
 
-@Composable
-fun BitcoinPriceFiltersAndRequest(filter: MutableState<String>) {
-    Column {
-        Spacer(modifier = Modifier.size(20.dp))
-        FilterGrid(filtros = filtros, filter = filter)
-        Spacer(modifier = Modifier.size(20.dp))
-        BitcoinApiRequest(filter = filter)
-    }
-}
-
-@Composable
-fun BitcoinApiRequest(
-    filter: MutableState<String>,
-    modifier: Modifier = Modifier
-        .wrapContentHeight()
-        .fillMaxWidth()
-) {
-    val bitcoinApiService =
-        BitRetrofitClient.retrofitInstance.create(BitcoinPriceService::class.java)
-    var valoresTeste by remember { mutableStateOf<BitcoinPriceResponse?>(null) }
-    val coroutineScope = rememberCoroutineScope()
-
-    LaunchedEffect(filter.value) {
-        coroutineScope.launch {
-            try {
-                val response = bitcoinApiService.getBitcoinPrices(time = filter.value)
-                valoresTeste = response
-                Log.d("API Response", response.toString())
-            } catch (e: Exception) {
-                Log.e("API Error", e.message ?: "Unknown error")
             }
+            Log.d("API Response", response.toString())
+        } catch (e: Exception) {
+            Log.e("API Error", e.message ?: "Unknown error")
         }
     }
+}*/
 
-    Column {
-        if (valoresTeste == null) {
-            Text(text = "Carregando...") // Exibe um texto de carregamento enquanto a API responde
-        } else {
-            val listSize = valoresTeste?.listOfValues?.size ?: 0
-            Text(
-                text = "Tamanho da lista: $listSize",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            ) // Exibe o tamanho da lista após o carregamento
-        }
-    }
-}
+
 
 
 @Composable
