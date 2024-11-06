@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
@@ -28,22 +27,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ir.ehsannarmani.compose_charts.LineChart
 import ir.ehsannarmani.compose_charts.models.AnimationMode
-import ir.ehsannarmani.compose_charts.models.DrawStyle
 import ir.ehsannarmani.compose_charts.models.Line
 import kotlinx.coroutines.launch
 import kotlin.random.Random
@@ -112,15 +107,26 @@ fun BitcoinApiRequest(
     }
 
     Column {
+        val listSize = valoresTeste.value?.listOfValues?.size
         if (valoresTeste == null) {
-            Text(text = "Carregando...") // Exibe um texto de carregamento enquanto a API responde
+            Text(
+                text = "Carregando...",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            ) //Exibe um texto de carregamento enquanto a API responde
+
+        } else if (listSize == null) {
+            Text(
+                text = "Selecione um filtro!",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
         } else {
-            val listSize = valoresTeste.value?.listOfValues?.size
             Text(
                 text = "Tamanho da lista: $listSize",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
-            ) // Exibe o tamanho da lista após o carregamento
+            )
         }
     }
 }
@@ -129,21 +135,27 @@ fun BitcoinApiRequest(
 fun TelaPrincipal(list: List<BitcoinPriceDto>) {
     Box(
         modifier = Modifier
-            .height(400.dp).fillMaxWidth()
+            .height(400.dp)
+            .fillMaxWidth()
             .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
-        MeuGrafico(list = list)
+        Graph(list = list)
     }
 }
 
 
 @Composable
-fun MeuGrafico(list: List<BitcoinPriceDto>) {
-    // Configura o gráfico dentro do composable
+fun Graph(list: List<BitcoinPriceDto>) {
     val lista = list.map {
         it.value
     }
+
+    val maxValue = lista.maxOrNull() ?: 0.0
+    val minValue = lista.minOrNull() ?: 0.0
+    Log.d("Alannn", "O valor máximo é: $maxValue e o mínimo é: $minValue")
+
+
     LineChart(
         modifier = Modifier
             .fillMaxSize()
@@ -155,76 +167,16 @@ fun MeuGrafico(list: List<BitcoinPriceDto>) {
                 values = lista,
                 color = SolidColor(randomColor()),
                 firstGradientFillColor = randomColor(),
-                secondGradientFillColor = randomColor(),
+                secondGradientFillColor = Color.Transparent,
                 strokeAnimationSpec = tween(2000, easing = EaseInOutCubic),
                 gradientAnimationDelay = 100,
             )
         ),
-        animationMode = AnimationMode.Together(delayBuilder = { it * 500L })
+        animationMode = AnimationMode.Together(delayBuilder = { it * 500L }),
+        minValue = minValue * 0.995, //variação de 0,5% abaixo para o mínimo
+        maxValue = maxValue * 1.005, //variação de 0,5% acima para o máximo
     )
 }
-
-/*@Composable
-fun LineChartSample(listOfObjects: List<BitcoinPriceDto?>) {
-    var list: List<Double>
-    if (listOfObjects.isNotEmpty()) {
-        list = listOfObjects.map {
-            it?.value ?: 0.0
-        }
-    } else {
-        list = emptyList()
-    }
-    val xAxisData = list.mapIndexed { index, _ -> "$index" }
-    Log.d("Alannn", xAxisData.size.toString())
-
-    val testLineParameters: List<LineParameters> = listOf(
-        LineParameters(
-            label = "BitcoinPrice",
-            data = list,
-            lineColor = randomColor(),
-            lineType = LineType.CURVED_LINE,
-            lineShadow = true,
-        ),
-        *//*LineParameters(
-            label = "Earnings",
-            data = listOf(60.0, 80.6, 40.33, 86.232, 88.0, 90.0),
-            lineColor = Color(0xFFFF7F50),
-            lineType = LineType.DEFAULT_LINE,
-            lineShadow = true
-        ),
-        LineParameters(
-            label = "Earnings",
-            data = listOf(1.0, 40.0, 11.33, 55.23, 1.0, 100.0),
-            lineColor = Color(0xFF81BE88),
-            lineType = LineType.CURVED_LINE,
-            lineShadow = false,
-        )*//*
-    )
-
-    Box(modifier = Modifier.fillMaxWidth()) {
-        LineChart(
-            modifier = Modifier.fillMaxWidth(),
-            linesParameters = testLineParameters,
-            isGrid = true,
-            gridColor = Color.Blue,
-            xAxisData = xAxisData,
-            animateChart = true,
-            showGridWithSpacer = true,
-            yAxisStyle = TextStyle(
-                fontSize = 14.sp,
-                color = randomColor(),
-            ),
-            xAxisStyle = TextStyle(
-                fontSize = 12.sp,
-                color = Color.Gray,
-                fontWeight = FontWeight.W400
-            ),
-            yAxisRange = 15,
-            oneLineChart = false,
-            gridOrientation = GridOrientation.VERTICAL
-        )
-    }
-}*/
 
 
 fun randomColor(): Color {
@@ -232,7 +184,7 @@ fun randomColor(): Color {
         red = Random.nextFloat(),
         green = Random.nextFloat(),
         blue = Random.nextFloat(),
-        alpha = 1f // Pode ajustar a opacidade se necessário
+        alpha = 1f
     )
 }
 
@@ -248,34 +200,6 @@ fun convertTimestampToDate(timestamp: Long): String {
     // Retorna a data formatada como uma String
     return dateFormat.format(date)
 }
-
-
-fun randomLength(): Float {
-    return Random.nextFloat() * 100f // Gera um valor entre 0 e 100
-}
-
-/*fun BitcoinApiValuesRequest(
-    time: String,
-    bitcoinApiService: BitcoinPriceService
-): Result<BitcoinPriceResponse?> {
-    GlobalScope.launch(Dispatchers.IO) {
-        val finalResult: Result<BitcoinPriceResponse?>
-        try {
-            val response = bitcoinApiService.getBitcoinPrices(time = time)
-            if (response.isSuccess) {
-                finalResult = response
-            } else {
-
-            }
-            Log.d("API Response", response.toString())
-        } catch (e: Exception) {
-            Log.e("API Error", e.message ?: "Unknown error")
-        }
-    }
-}*/
-
-
-
 
 @Composable
 fun FilterGrid(
