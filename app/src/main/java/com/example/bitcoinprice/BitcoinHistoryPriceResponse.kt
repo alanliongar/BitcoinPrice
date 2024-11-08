@@ -2,12 +2,12 @@ package com.example.bitcoinprice
 
 import com.google.gson.annotations.SerializedName
 
-data class BitcoinPriceResponse(
+data class BitcoinHistoryPriceResponse(
     @SerializedName("values")
-    val listOfValues: List<BitcoinPriceDto>
+    val listOfValues: List<BitcoinPriceHistoryDto>
 )
 
-data class BitcoinPriceDto(
+data class BitcoinPriceHistoryDto(
     @SerializedName("y")
     val value: Double,
     @SerializedName("x")
