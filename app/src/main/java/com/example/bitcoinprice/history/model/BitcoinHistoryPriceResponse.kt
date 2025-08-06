@@ -1,4 +1,4 @@
-package com.example.bitcoinprice
+package com.example.bitcoinprice.history.model
 
 import com.google.gson.annotations.SerializedName
 

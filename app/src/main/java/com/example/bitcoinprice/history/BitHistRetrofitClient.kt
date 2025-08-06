@@ -1,17 +1,18 @@
-package com.example.bitcoinprice
+package com.example.bitcoinprice.history
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-private const val BASE_PRICE_URL: String = "https://blockchain.info/"
-    //"https://api.blockchain.com/v3/exchange/"
+private const val BASE_HIST_URL: String = "https://api.blockchain.info/charts/"
 
-object BitPriceRetrofitClient {
+
+object BitHistRetrofitClient {
     val retrofitInstance: Retrofit
         get() {
             return Retrofit.Builder()
-                .baseUrl(BASE_PRICE_URL)
+                .baseUrl(BASE_HIST_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         }
 }
+

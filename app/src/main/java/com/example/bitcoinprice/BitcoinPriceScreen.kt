@@ -34,6 +34,14 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bitcoinprice.common.utils.FilterOptions
+import com.example.bitcoinprice.common.model.BitcoinPriceDto
+import com.example.bitcoinprice.history.BitHistRetrofitClient
+import com.example.bitcoinprice.history.model.BitcoinHistoryPriceResponse
+import com.example.bitcoinprice.history.BitcoinHistoryPriceService
+import com.example.bitcoinprice.history.model.BitcoinPriceHistoryDto
+import com.example.bitcoinprice.price.data.remote.BitPriceRetrofitClient
+import com.example.bitcoinprice.price.data.remote.BitcoinPriceService
 import ir.ehsannarmani.compose_charts.LineChart
 import ir.ehsannarmani.compose_charts.models.AnimationMode
 import ir.ehsannarmani.compose_charts.models.Line

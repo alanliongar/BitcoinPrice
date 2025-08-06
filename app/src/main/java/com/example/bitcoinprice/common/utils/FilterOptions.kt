@@ -1,4 +1,4 @@
-package com.example.bitcoinprice
+package com.example.bitcoinprice.common.utils
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
