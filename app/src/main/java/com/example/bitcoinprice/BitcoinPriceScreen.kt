@@ -71,6 +71,12 @@ private fun BitcoinPriceContent(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            "Bitcoin Price (USD)",
+            fontSize = 46.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF16B919)
+        )
         BitcoinPricesAndFiltersRequests(
             filter = filter,
             historyPrices = historyPrices,
@@ -103,19 +109,29 @@ private fun BitcoinPriceContent(
 @Composable
 fun BitcoinPrice(modifier: Modifier = Modifier, nowPrice: MutableState<BitcoinPriceDto?>) {
     var color = Color.Black
-    Column(modifier = Modifier.wrapContentHeight(), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.wrapContentHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(text = "Last Trade Price:", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.size(10.dp))
         if (nowPrice.value != null) {
-            if (nowPrice.value?.priceVariation!! <= 1 && nowPrice.value?.priceVariation!! > 0) {
-                //Se a variação está entre 0 e 1, significa que o preço caiu.
+            val startPrice = nowPrice.value?.usd?.fifMin
+            val endPrice = nowPrice.value?.usd?.last
+            val priceVariation = if (startPrice != null && endPrice != null) {
+                (endPrice - startPrice) / startPrice
+            } else {
+                0.0
+            }
+            if (priceVariation < 0) {
+                //Se a variação for menor que 0, significa que caiu.
                 color = Color.Red
             } else {
                 color = Color(0xFF16B919)
             }
 
             Text(
-                text = "$${nowPrice.value?.lastTradePrice.toString()}",
+                text = "$${nowPrice.value?.usd?.last.toString()}",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.SemiBold, color = color
             )
@@ -187,7 +203,6 @@ private fun BitcoinPricesApisRequests(
                     val response =
                         bitcoinHistoryPriceApiService.getBitcoinHistoryPrices(time = filter.value)
                     valoresTeste.value = response
-                    Log.d("API Response", response.toString())
                     exCeption.value = null
                 } catch (ex: Exception) {
                     exCeption.value = ex
@@ -213,7 +228,7 @@ private fun BitcoinPricesApisRequests(
             Text(
                 text = "Please, select a filter",
                 fontSize = 36.sp,
-                fontWeight = FontWeight.Bold, color=Color(0xFF14D1DD)
+                fontWeight = FontWeight.Bold, color = Color(0xFF14D1DD)
             )
         } else {
             /*Text( //Usei essa parte só pra ver se a chamada tava empilhando tudo certinho
@@ -248,7 +263,6 @@ private fun GraphDesignItem(list: List<BitcoinPriceHistoryDto>) {
 
     val maxValue = lista.maxOrNull() ?: 0.0
     val minValue = lista.minOrNull() ?: 0.0
-    Log.d("Alannn", "O valor máximo é: $maxValue e o mínimo é: $minValue")
 
     LineChart(
         //esse elemento aqui é de uma biblioteca aleatória que achei buscando no github, nem achei documentação pra ela e perdi mto tempo aprendendo como funciona
@@ -256,17 +270,17 @@ private fun GraphDesignItem(list: List<BitcoinPriceHistoryDto>) {
             .fillMaxSize()
             .padding(horizontal = 22.dp),
         data =
-        listOf(
-            Line(
-                label = "Bitcoin Price",
-                values = lista,
-                color = SolidColor(randomColor()),
-                firstGradientFillColor = randomColor(),
-                secondGradientFillColor = Color.Transparent,
-                strokeAnimationSpec = tween(2000, easing = EaseInOutCubic),
-                gradientAnimationDelay = 100,
-            )
-        ),
+            listOf(
+                Line(
+                    label = "Bitcoin Price",
+                    values = lista,
+                    color = SolidColor(randomColor()),
+                    firstGradientFillColor = randomColor(),
+                    secondGradientFillColor = Color.Transparent,
+                    strokeAnimationSpec = tween(2000, easing = EaseInOutCubic),
+                    gradientAnimationDelay = 100,
+                )
+            ),
         animationMode = AnimationMode.Together(delayBuilder = { it * 500L }),
         minValue = minValue * 0.995, //variação de 0,5% abaixo para o mínimo
         maxValue = maxValue * 1.005, //variação de 0,5% acima para o máximo

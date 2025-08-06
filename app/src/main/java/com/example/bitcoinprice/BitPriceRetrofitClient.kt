@@ -3,7 +3,8 @@ package com.example.bitcoinprice
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-private const val BASE_PRICE_URL: String = "https://api.blockchain.com/v3/exchange/"
+private const val BASE_PRICE_URL: String = "https://blockchain.info/"
+    //"https://api.blockchain.com/v3/exchange/"
 
 object BitPriceRetrofitClient {
     val retrofitInstance: Retrofit

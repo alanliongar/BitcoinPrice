@@ -61,8 +61,8 @@ dependencies {
 
 
     val latest_release = "Beta-0.0.5"
-    implementation("io.github.thechance101:chart:$latest_release")
-    implementation ("io.github.ehsannarmani:compose-charts:0.0.16")
+    implementation ("io.github.ehsannarmani:compose-charts:0.1.7")
+//    implementation("io.github.thechance101:chart:$latest_release")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
