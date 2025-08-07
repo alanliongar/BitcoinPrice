@@ -2,6 +2,13 @@
 
 This is a simple and visual Android app that tracks real-time and historical Bitcoin prices using **Jetpack Compose**. It includes animated graphs, filter buttons, and fallback error handling — all structured with modern Android development practices.
 
+## :camera_flash: Screenshots
+<p float="left">
+  <img src="https://github.com/alanliongar/BitcoinPrice/blob/master/Screenshots/Screenshot_01.png" width="250"/> 
+  <img src="https://github.com/alanliongar/BitcoinPrice/blob/master/Screenshots/Screenshot_02.png" width="250"/>
+  <img src="https://github.com/alanliongar/BitcoinPrice/blob/master/Screenshots/Screenshot_03.png" width="250"/>
+</p>
+
 ## ✨ Features
 
 - 🪙 **Live Bitcoin Price** — Updated from public API
@@ -27,15 +34,26 @@ This is a simple and visual Android app that tracks real-time and historical Bit
 - Visualizing data with animated charts
 - Managing UI state using `remember`, `mutableStateOf`, and `LaunchedEffect`
 
-## 🔧 Setup
+## License
+```
+The MIT License (MIT)
 
-Make sure you have:
+Copyright (c) 2025 Alan Lucindo Gomes
 
-- Android Studio **Hedgehog** or later
-- JDK **21**
-- Minimum SDK **21**
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
 
-Then just clone and run:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-```bash
-git clone https://github.com/alanliongar/BitcoinPrice
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+```
